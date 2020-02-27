@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace InnerCore.Api.LgWebOS.Models
+{
+    public class ExternalInput
+    {
+        public ExternalInput(string id, string label)
+        {
+            Id = id;
+            Label = label;
+        }
+        public string Id { get; set; }
+        public string Label { get; set; }
+        public string Icon { get; set; }
+
+    }
+}
