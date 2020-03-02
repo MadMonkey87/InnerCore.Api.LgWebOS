@@ -61,12 +61,12 @@ namespace InnerCore.Api.LgWebOS
 
 		public async Task IncreaseVolume(CancellationToken cancellationToken)
 		{
-			await SendAsync<SimplifiedResponse>(new RequestMessage(Constants.URL_VOLUME_UP, "volumeup"), cancellationToken);
+			await SendAsync<SimplifiedResponse>(new RequestMessage(Constants.URL_VOLUME_UP), cancellationToken);
 		}
 
 		public async Task DecreaseVolume(CancellationToken cancellationToken)
 		{
-			await SendAsync<SimplifiedResponse>(new RequestMessage(Constants.URL_VOLUME_DOWN, "volumedown"), cancellationToken);
+			await SendAsync<SimplifiedResponse>(new RequestMessage(Constants.URL_VOLUME_DOWN), cancellationToken);
 		}
 
 		public void Dispose()

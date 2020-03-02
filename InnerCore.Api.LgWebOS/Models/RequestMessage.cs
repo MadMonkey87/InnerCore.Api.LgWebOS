@@ -1,29 +1,12 @@
-﻿using Newtonsoft.Json;
-
-namespace InnerCore.Api.LgWebOS.Models
+﻿namespace InnerCore.Api.LgWebOS.Models
 {
 	public class RequestMessage
 	{
-		//public RequestMessage(string uri, string payload, string prefix)
-		//{
-		//	Uri = uri;
-		//	Payload = payload;
-		//	Prefix = prefix;
-		//}
-
-		public RequestMessage(string uri, string prefix)
+		public RequestMessage(string uri)
 		{
 			Uri = uri;
-			Prefix = prefix;
 			Type = RequestType.Request;
 		}
-
-		//public RequestMessage(string uri, object payload, string prefix)
-		//{
-		//	Uri = uri;
-		//	Payload = JsonConvert.SerializeObject(payload);
-		//	Prefix = prefix;
-		//}
 
 		public string Prefix { get; set; }
 
@@ -31,6 +14,6 @@ namespace InnerCore.Api.LgWebOS.Models
 
 		public string Uri { get; set; }
 
-		//public string Payload { get; set; }
+		public string Payload { get; set; }
 	}
 }

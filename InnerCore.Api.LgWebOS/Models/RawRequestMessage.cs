@@ -3,7 +3,7 @@
 namespace InnerCore.Api.LgWebOS.Models
 {
     [DataContract]
-    public class RawRequestMessage
+    internal class RawRequestMessage
     {
         public RawRequestMessage()
         {
@@ -12,11 +12,10 @@ namespace InnerCore.Api.LgWebOS.Models
 
         public RawRequestMessage(RequestMessage requestMessage, int commandCount)
         {
-            var prefix = (requestMessage.Prefix ?? "");
-            Id = prefix + (prefix.Length > 0 ? "_" : "") + commandCount;
+            Id = commandCount.ToString();
             Type = requestMessage.Type;
             Uri = requestMessage.Uri;
-            //Payload = requestMessage.Payload;
+            Payload = requestMessage.Payload;
         }
 
         [DataMember(Name = "id")]
