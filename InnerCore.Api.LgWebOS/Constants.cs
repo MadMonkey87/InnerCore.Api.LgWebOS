@@ -37,5 +37,15 @@
 		public const string URL_SHOW_TOAST = "ssap://system.notifications/createToast";
 
 		public const string URL_LAUNCH = "ssap://system.launcher/launch";
+
+		public const string URL_GET_LAUNCH_POINTS = "ssap://com.webos.applicationManager/listLaunchPoints";
+
+		public const string URL_GET_FOREGROUND_APP_INFO = "ssap://com.webos.applicationManager/getForegroundAppInfo";
+
+		public const string URL_SEND_ENTER_COMMAND = "ssap://com.webos.service.ime/sendEnterKey";
+
+		public const string URL_SEND_DELETE_COMMAND = "ssap://com.webos.service.ime/deleteCharacters";
+
+		public const string URL_GET_SYSTEM_INFO = "ssap://com.webos.service.update/getCurrentSWInformation";
 	}
 }

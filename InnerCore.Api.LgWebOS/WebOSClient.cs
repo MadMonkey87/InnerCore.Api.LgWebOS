@@ -3,6 +3,7 @@ using InnerCore.Api.LgWebOS.Models.Payload;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Reflection;
@@ -129,6 +130,34 @@ namespace InnerCore.Api.LgWebOS
 		public async Task LaunchApp(string appId, string contentId, CancellationToken cancellationToken)
 		{
 			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_LAUNCH, new LaunchPayload() { Id = appId, ContentId = contentId }, cancellationToken);
+		}
+
+		public async Task<FordergroundAppInfoPayload> GetFordergroundAppInfo(CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<FordergroundAppInfoPayload>>(Constants.URL_GET_FOREGROUND_APP_INFO, null, cancellationToken);
+			return response.Payload;
+		}
+
+		public async Task<List<LaunchPoint>> GetLaunchPoints(CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<LaunchPointsPayload>>(Constants.URL_GET_LAUNCH_POINTS, null, cancellationToken);
+			return response.Payload.LaunchPoints;
+		}
+
+		public async Task SendEnterKey(CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<LaunchPointsPayload>>(Constants.URL_SEND_ENTER_COMMAND, null, cancellationToken);
+		}
+
+		public async Task SendDeleteCommand(CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<LaunchPointsPayload>>(Constants.URL_SEND_DELETE_COMMAND, null, cancellationToken);
+		}
+
+		public async Task<SystemInfoPayload> GetSystemInfo(CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<SystemInfoPayload>>(Constants.URL_GET_SYSTEM_INFO, null, cancellationToken);
+			return response.Payload;
 		}
 
 		public void Dispose()
