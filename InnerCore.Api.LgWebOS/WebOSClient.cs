@@ -60,6 +60,11 @@ namespace InnerCore.Api.LgWebOS
 			return await SendRawAsync(content, cancellationToken);
 		}
 
+		public async Task ApplyMute(bool mute, CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_MUTE, new MutePayload() { Mute = mute }, cancellationToken);
+		}
+
 		public async Task IncreaseVolume(CancellationToken cancellationToken)
 		{
 			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_VOLUME_UP, null, cancellationToken);
