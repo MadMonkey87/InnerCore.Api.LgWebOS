@@ -5,17 +5,12 @@ namespace InnerCore.Api.LgWebOS.Models
     [DataContract]
     internal class RawRequestMessage
     {
-        public RawRequestMessage()
-        {
-
-        }
-
-        public RawRequestMessage(RequestMessage requestMessage, int commandCount)
+        public RawRequestMessage(int commandCount, string uri, object payload = null)
         {
             Id = commandCount.ToString();
-            Type = requestMessage.Type;
-            Uri = requestMessage.Uri;
-            Payload = requestMessage.Payload;
+            Type = RequestType.Request;
+            Uri = uri;
+            Payload = payload;
         }
 
         [DataMember(Name = "id")]

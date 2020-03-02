@@ -62,12 +62,12 @@ namespace InnerCore.Api.LgWebOS
 
 		public async Task IncreaseVolume(CancellationToken cancellationToken)
 		{
-			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(new RequestMessage(Constants.URL_VOLUME_UP), cancellationToken);
+			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_VOLUME_UP, null, cancellationToken);
 		}
 
 		public async Task DecreaseVolume(CancellationToken cancellationToken)
 		{
-			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(new RequestMessage(Constants.URL_VOLUME_DOWN), cancellationToken);
+			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_VOLUME_DOWN, null, cancellationToken);
 		}
 
 		public void Dispose()
@@ -107,12 +107,12 @@ namespace InnerCore.Api.LgWebOS
 			return null;
 		}
 
-		private async Task<T> SendAsync<T>(RequestMessage request, CancellationToken cancellationToken) where T : ResponseWithoutPayload
+		private async Task<T> SendAsync<T>(string uri, object payload, CancellationToken cancellationToken) where T : ResponseWithoutPayload
 		{
 			await EnsureIsConnectedAsync(cancellationToken);
 			// todo: ensure authorized
 
-			var rawRequest = new RawRequestMessage(request, _messageCount);
+			var rawRequest = new RawRequestMessage(_messageCount, uri, payload);
 			var serializedRequest = JsonConvert.SerializeObject(rawRequest, _serializerSettings);
 
 			await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(serializedRequest)), WebSocketMessageType.Text, true, cancellationToken);
