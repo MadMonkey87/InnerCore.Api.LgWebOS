@@ -19,5 +19,11 @@
 		public const string URL_VOLUME_UP= "ssap://audio/volumeUp";
 
 		public const string URL_VOLUME_DOWN = "ssap://audio/volumeDown";
+
+		public const string URL_PLAY = "ssap://media.controls/play";
+
+		public const string URL_PAUSE = "ssap://media.controls/pause";
+
+		public const string URL_STOP = "ssap://media.controls/stop";
 	}
 }

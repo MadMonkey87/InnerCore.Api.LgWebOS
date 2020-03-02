@@ -86,6 +86,21 @@ namespace InnerCore.Api.LgWebOS
 			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_SET_VOLUME, new SetVolumePayload() { Volume = volume }, cancellationToken);
 		}
 
+		public async Task Play(CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_PLAY, null, cancellationToken);
+		}
+
+		public async Task Pause(CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_PAUSE, null, cancellationToken);
+		}
+
+		public async Task Stop(CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_STOP, null, cancellationToken);
+		}
+
 		public void Dispose()
 		{
 			_webSocket.Dispose();
