@@ -25,5 +25,11 @@
 		public const string URL_PAUSE = "ssap://media.controls/pause";
 
 		public const string URL_STOP = "ssap://media.controls/stop";
+
+		public const string URL_REWIND = "ssap://media.controls/rewind";
+
+		public const string URL_FAST_FORWARD = "ssap://media.controls/fastForward";
+
+		public const string URL_CLOSE = "ssap://media.viewer/close";
 	}
 }
