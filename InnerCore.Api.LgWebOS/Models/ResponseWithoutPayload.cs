@@ -3,7 +3,7 @@
 namespace InnerCore.Api.LgWebOS.Models
 {
 	[DataContract]
-	public class SimplifiedResponse
+	public class ResponseWithoutPayload
 	{
 		[DataMember(Name = "id")]
 		public string Id { get; set; }

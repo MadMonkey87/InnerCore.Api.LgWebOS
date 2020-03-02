@@ -1,4 +1,5 @@
 ﻿using InnerCore.Api.LgWebOS.Models;
+using InnerCore.Api.LgWebOS.Models.Payload;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -61,12 +62,12 @@ namespace InnerCore.Api.LgWebOS
 
 		public async Task IncreaseVolume(CancellationToken cancellationToken)
 		{
-			await SendAsync<SimplifiedResponse>(new RequestMessage(Constants.URL_VOLUME_UP), cancellationToken);
+			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(new RequestMessage(Constants.URL_VOLUME_UP), cancellationToken);
 		}
 
 		public async Task DecreaseVolume(CancellationToken cancellationToken)
 		{
-			await SendAsync<SimplifiedResponse>(new RequestMessage(Constants.URL_VOLUME_DOWN), cancellationToken);
+			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(new RequestMessage(Constants.URL_VOLUME_DOWN), cancellationToken);
 		}
 
 		public void Dispose()
@@ -106,7 +107,7 @@ namespace InnerCore.Api.LgWebOS
 			return null;
 		}
 
-		private async Task<T> SendAsync<T>(RequestMessage request, CancellationToken cancellationToken) where T : SimplifiedResponse
+		private async Task<T> SendAsync<T>(RequestMessage request, CancellationToken cancellationToken) where T : ResponseWithoutPayload
 		{
 			await EnsureIsConnectedAsync(cancellationToken);
 			// todo: ensure authorized
