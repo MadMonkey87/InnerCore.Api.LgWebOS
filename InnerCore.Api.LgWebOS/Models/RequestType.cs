@@ -15,5 +15,8 @@ namespace InnerCore.Api.LgWebOS.Models
 
 		[EnumMember(Value = "unsubscribe")]
 		Unsubscribe = 4,
+
+		[EnumMember(Value = "response")]
+		Response = 5,
 	}
 }
