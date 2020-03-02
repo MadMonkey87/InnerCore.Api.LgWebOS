@@ -18,9 +18,11 @@ namespace InnerCore.Api.LgWebOS
 
 		private readonly ArraySegment<byte> buffer = WebSocket.CreateClientBuffer(Constants.WEB_SOCKET_RECEIVE_BUFFER_SIZE, Constants.WEB_SOCKET_SEND_BUFFER_SIZE);
 
-		private int messageCount = 0;
+		private int _messageCount = 0;
 
-		public WebOSClient(string ip, int port)
+		private bool _authorized = false;
+
+		public WebOSClient(string ip, int port = 3000)
 		{
 			if (ip == null)
 			{
@@ -33,9 +35,59 @@ namespace InnerCore.Api.LgWebOS
 			}
 		}
 
+		public async Task<string> RegisterAsync()
+		{
+			var content = GetContentFromResource();
+			content = content.Replace("[type]", "register");
+			content = content.Replace("[id]", $"register_{_messageCount}");
+			content = content.Replace("[client-key]", "null");
+			return null;
+		}
+
+		public async Task<string> Authorize(string accessToken)
+		{
+			var content = GetContentFromResource();
+			content = content.Replace("[type]", "register");
+			content = content.Replace("[id]", $"register_{_messageCount}");
+			content = content.Replace("[client-key]", accessToken);
+			return await SendRawAsync(content, CancellationToken.None);
+		}
+
 		public void Dispose()
 		{
 			_webSocket.Dispose();
+		}
+
+		private async Task<string> SendRawAsync(string serializedRequest, CancellationToken cancellationToken)
+		{
+			await EnsureIsConnectedAsync(cancellationToken);
+
+			await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(serializedRequest)), WebSocketMessageType.Text, true, cancellationToken);
+
+			while (_webSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
+			{
+				var response = await _webSocket.ReceiveAsync(buffer, cancellationToken);
+
+				if (response.MessageType == WebSocketMessageType.Close)
+				{
+					await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, cancellationToken);
+					return null;
+				}
+				else if (response.MessageType != WebSocketMessageType.Text)
+				{
+					throw new NotSupportedException($"unsupported message type: {response.MessageType}");
+				}
+				else if (!response.EndOfMessage)
+				{
+					throw new NotSupportedException($"the message appears to be sent in chunks which is not supported");
+				}
+				else
+				{
+					var serializedResponse = Encoding.UTF8.GetString(buffer.Array).TrimEnd((char)0);
+					return serializedResponse;
+				}
+			}
+			return null;
 		}
 
 		private async Task<T> SendAsync<T>(RequestMessage request, CancellationToken cancellationToken) where T : SimplifiedResponse
@@ -43,7 +95,7 @@ namespace InnerCore.Api.LgWebOS
 			await EnsureIsConnectedAsync(cancellationToken);
 			// todo: ensure authorized
 
-			var rawRequest = new RawRequestMessage(request, messageCount);
+			var rawRequest = new RawRequestMessage(request, _messageCount);
 			var serializedRequest = JsonConvert.SerializeObject(rawRequest);
 
 			await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(serializedRequest)), WebSocketMessageType.Text, true, cancellationToken);
@@ -68,6 +120,7 @@ namespace InnerCore.Api.LgWebOS
 				else
 				{
 					var serializedResponse = Encoding.UTF8.GetString(buffer.Array).TrimEnd((char)0);
+					// todo: handle the case that this can't be deserialized
 					var deserializedResponse = JsonConvert.DeserializeObject<T>(serializedResponse);
 					if (deserializedResponse.Id == rawRequest.Id)
 					{
@@ -80,18 +133,19 @@ namespace InnerCore.Api.LgWebOS
 
 		private async Task EnsureIsConnectedAsync(CancellationToken cancellationToken)
 		{
-			if (_webSocket.State != WebSocketState.Closed)
+			if (_webSocket.State != WebSocketState.None && _webSocket.State != WebSocketState.Closed)
 			{
 				return;
 			}
-			messageCount = 0;
+			_messageCount = 0;
+			_authorized = false;
 			await _webSocket.ConnectAsync(_uri, cancellationToken);
 		}
 
 		private string GetContentFromResource(string fileName = "InnerCore.Api.LgWebOS.RegistrationPayload.json")
 		{
 			string content;
-			var assembly = typeof(Client).GetTypeInfo().Assembly;
+			var assembly = typeof(WebOSClient).GetTypeInfo().Assembly;
 
 			using (var stream = assembly.GetManifestResourceStream(fileName))
 			{

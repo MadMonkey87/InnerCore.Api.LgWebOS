@@ -1,9 +1,10 @@
 ﻿{
-  "type": "register",
-  "id": "register_0",
+  "type": "[type]",
+  "id": "[id]",
   "payload": {
     "forcePairing": false,
     "pairingType": "PROMPT",
+    "client-key": "[client-key]",
     "manifest": {
       "manifestVersion": 1,
       "appVersion": "1.1",
