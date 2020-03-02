@@ -31,5 +31,11 @@
 		public const string URL_FAST_FORWARD = "ssap://media.controls/fastForward";
 
 		public const string URL_CLOSE = "ssap://media.viewer/close";
+
+		public const string URL_TURN_OFF = "ssap://system/turnOff";
+
+		public const string URL_SHOW_TOAST = "ssap://system.notifications/createToast";
+
+		public const string URL_LAUNCH = "ssap://system.launcher/launch";
 	}
 }
