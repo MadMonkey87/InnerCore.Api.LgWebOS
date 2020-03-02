@@ -75,6 +75,12 @@ namespace InnerCore.Api.LgWebOS
 			var response = await SendAsync<ResponseWithPayload<ReturnValuePayload>>(Constants.URL_VOLUME_DOWN, null, cancellationToken);
 		}
 
+		public async Task<VolumeDetailsPayload> GetVolume(CancellationToken cancellationToken)
+		{
+			var response = await SendAsync<ResponseWithPayload<VolumeDetailsPayload>>(Constants.URL_GET_VOLUME, null, cancellationToken);
+			return response.Payload;
+		}
+
 		public void Dispose()
 		{
 			_webSocket.Dispose();
