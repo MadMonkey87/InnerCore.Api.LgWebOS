@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace InnerCore.Api.LgWebOS.Models
+﻿namespace InnerCore.Api.LgWebOS.Models
 {
     public class ExternalInput
     {

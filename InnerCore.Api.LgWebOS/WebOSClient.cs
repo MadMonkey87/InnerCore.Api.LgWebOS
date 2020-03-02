@@ -1,5 +1,6 @@
 ﻿using InnerCore.Api.LgWebOS.Models;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.IO;
 using System.Net.WebSockets;
@@ -22,6 +23,8 @@ namespace InnerCore.Api.LgWebOS
 
 		private bool _authorized = false;
 
+		private readonly JsonSerializerSettings _serializerSettings;
+
 		public WebOSClient(string ip, int port = 3000)
 		{
 			if (ip == null)
@@ -33,9 +36,12 @@ namespace InnerCore.Api.LgWebOS
 			{
 				throw new Exception(string.Format("The supplied ip to the WebOS TV is not a valid ip: {0}:{1}", ip, port));
 			}
+
+			_serializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
+			_serializerSettings.Converters.Add(new StringEnumConverter());
 		}
 
-		public async Task<string> RegisterAsync()
+		public async Task<string> RegisterAsync(CancellationToken cancellationToken)
 		{
 			var content = GetContentFromResource();
 			content = content.Replace("[type]", "register");
@@ -44,13 +50,23 @@ namespace InnerCore.Api.LgWebOS
 			return null;
 		}
 
-		public async Task<string> Authorize(string accessToken)
+		public async Task<string> Authorize(string accessToken, CancellationToken cancellationToken)
 		{
 			var content = GetContentFromResource();
 			content = content.Replace("[type]", "register");
 			content = content.Replace("[id]", $"register_{_messageCount}");
 			content = content.Replace("[client-key]", accessToken);
-			return await SendRawAsync(content, CancellationToken.None);
+			return await SendRawAsync(content, cancellationToken);
+		}
+
+		public async Task IncreaseVolume(CancellationToken cancellationToken)
+		{
+			await SendAsync<SimplifiedResponse>(new RequestMessage(Constants.URL_VOLUME_UP, "volumeup"), cancellationToken);
+		}
+
+		public async Task DecreaseVolume(CancellationToken cancellationToken)
+		{
+			await SendAsync<SimplifiedResponse>(new RequestMessage(Constants.URL_VOLUME_DOWN, "volumedown"), cancellationToken);
 		}
 
 		public void Dispose()
@@ -96,7 +112,7 @@ namespace InnerCore.Api.LgWebOS
 			// todo: ensure authorized
 
 			var rawRequest = new RawRequestMessage(request, _messageCount);
-			var serializedRequest = JsonConvert.SerializeObject(rawRequest);
+			var serializedRequest = JsonConvert.SerializeObject(rawRequest, _serializerSettings);
 
 			await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(serializedRequest)), WebSocketMessageType.Text, true, cancellationToken);
 
@@ -119,9 +135,9 @@ namespace InnerCore.Api.LgWebOS
 				}
 				else
 				{
-					var serializedResponse = Encoding.UTF8.GetString(buffer.Array).TrimEnd((char)0);
+					var serializedResponse = Encoding.UTF8.GetString(buffer.Array, 0, response.Count).TrimEnd((char)0);
 					// todo: handle the case that this can't be deserialized
-					var deserializedResponse = JsonConvert.DeserializeObject<T>(serializedResponse);
+					var deserializedResponse = JsonConvert.DeserializeObject<T>(serializedResponse, _serializerSettings);
 					if (deserializedResponse.Id == rawRequest.Id)
 					{
 						return deserializedResponse;

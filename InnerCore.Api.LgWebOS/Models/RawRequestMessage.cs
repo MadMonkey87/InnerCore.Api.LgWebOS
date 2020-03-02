@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Runtime.Serialization;
 
 namespace InnerCore.Api.LgWebOS.Models
 {
-    internal class RawRequestMessage
+    [DataContract]
+    public class RawRequestMessage
     {
         public RawRequestMessage()
         {
@@ -17,16 +16,19 @@ namespace InnerCore.Api.LgWebOS.Models
             Id = prefix + (prefix.Length > 0 ? "_" : "") + commandCount;
             Type = requestMessage.Type;
             Uri = requestMessage.Uri;
-            Payload = requestMessage.Payload;
+            //Payload = requestMessage.Payload;
         }
 
-
+        [DataMember(Name = "id")]
         public string Id { get; set; }
 
+        [DataMember(Name = "type")]
         public RequestType Type { get; set; }
 
+        [DataMember(Name = "uri")]
         public string Uri { get; set; }
 
-        public string Payload { get; set; }
+        [DataMember(Name = "payload")]
+        public object Payload { get; set; }
     }
 }
